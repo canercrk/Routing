@@ -1,0 +1,8 @@
+Flask
+osmnx
+networkx
+folium
+geopy
+shapely
+geopandas
+gunicorn

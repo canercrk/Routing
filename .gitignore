@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# OSMnx cache
+cache/
+
+# VS Code
+.vscode/
+
+# Diğer
+static/downloads/
+*.log
+
+# Data files
+dataset.json
+*.json

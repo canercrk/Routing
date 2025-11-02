@@ -1,0 +1,240 @@
+/* Ana stil tanımlamaları */
+body {
+    transition: all 0.3s ease;
+}
+
+/* Harita konteyner yüksekliği */
+#map-container {
+    height: 500px;
+}
+
+#map {
+    height: 100%;
+    width: 100%;
+    border-radius: 0.25rem;
+}
+
+/* Mod seçim butonları */
+.selection-mode {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Haritadaki işaretçi stilleri */
+.marker-start, .marker-end, .marker-waypoint {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.marker-start:hover, .marker-end:hover, .marker-waypoint:hover {
+    transform: scale(1.2);
+}
+
+/* Sonuç kutusu stilleri */
+.result-box {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+/* Animasyonlu geçişler */
+.card, .btn, .form-control, .form-select, select {
+    transition: all 0.3s ease;
+}
+
+/* Responsive düzenlemeler */
+@media (max-width: 768px) {
+    #map-container {
+        height: 400px;
+        margin-bottom: 1rem;
+    }
+}
+
+/* Yazı stilleri */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+}
+
+/* Geçiş animasyonları */
+.btn {
+    position: relative; /* Ripple efektinin doğru çalışması için gerekli */
+    overflow: hidden; /* Ripple efektinin buton sınırları içinde kalmasını sağlar */
+    transition: all 0.3s ease; /* Butonun boyut, renk veya diğer özellik değişimlerinde yumuşak geçiş */
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.3);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%, -50%);
+    transform-origin: 50% 50%;
+}
+
+.btn:focus:not(:active)::after {
+    animation: ripple 0.8s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(20, 20);
+        opacity: 0;
+    }
+}
+
+/* Ara noktalar bölümü */
+#waypoint-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.marker-start {
+    background-color: #28a745;
+    border-radius: 50%;
+    border: 2px solid white;
+    width: 16px;
+    height: 16px;
+}
+.marker-end {
+    background-color: #dc3545;
+    border-radius: 50%;
+    border: 2px solid white;
+    width: 16px;
+    height: 16px;
+}
+.marker-waypoint {
+    background-color: #ffc107;
+    border-radius: 50%;
+    border: 2px solid white;
+    width: 16px;
+    height: 16px;
+}
+.marker-intersection {
+    background-color: #007bff;
+    border-radius: 50%;
+    border: 2px solid white;
+    width: 12px;
+    height: 12px;
+}
+
+/* Sağdaki formu ekranın en sağına yerleştir ve genişliği artır */
+.card.shadow.mb-3 {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    z-index: 10;
+    max-height:72%;
+    overflow-y:auto;
+    max-width: 31%; /* Ekran boyutuna göre genişlik sınırı */
+    background-color: rgba(255, 255, 255, 0.9); /* Hafif şeffaf arka plan */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Sonuç kutusunu ekranın en altına ve ortaya yerleştir */
+.result-box.shadow.rounded.p-3.mt-3 {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    width: 90%; /* Varsayılan genişlik */
+    max-width: 600px; /* Maksimum genişlik */
+    background-color: rgba(255, 255, 255, 0.9); /* Hafif şeffaf arka plan */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* d-flex mb-2 sınıfı için responsive düzenlemeler */
+.d-flex.mb-2 {
+    display: flex;
+    flex-wrap: nowrap; /* Öğelerin alt alta gitmesini engelle */
+    align-items: center; /* Dikey hizalama */
+    gap: 0.5rem; /* Öğeler arası boşluk */
+}
+
+/* d-flex içindeki tüm öğeler */
+.d-flex.mb-2 * {
+    flex-shrink: 1; /* Öğelerin küçülmesine izin ver */
+    min-width: 0; /* Taşmayı önle */
+    white-space: nowrap; /* Yazıların alt alta gitmesini engelle */
+    overflow: hidden; /* Taşan içeriği gizle */
+    text-overflow: ellipsis; /* Uzun yazılara "..." ekle */
+}
+
+/* Büyük ekranlar (1200px ve üzeri) */
+@media (min-width: 1200px) {
+    .d-flex.mb-2 {
+        gap: 0.75rem;
+    }
+    
+    .d-flex.mb-2 * {
+        font-size: 0.9rem;
+    }
+}
+
+/* Tablet (768px - 1199px) */
+@media (max-width: 1199px) and (min-width: 768px) {
+    .d-flex.mb-2 {
+        gap: 0.5rem;
+    }
+    
+    .d-flex.mb-2 * {
+        font-size: 0.85rem;
+    }
+}
+
+/* Küçük Tablet (576px - 767px) */
+@media (max-width: 767px) and (min-width: 576px) {
+    .d-flex.mb-2 {
+        gap: 0.4rem;
+        flex-wrap: wrap; /* Gerekirse alt alta geçmesine izin ver */
+    }
+    
+    .d-flex.mb-2 * {
+        font-size: 0.8rem;
+    }
+}
+
+/* Telefonlar (max-width: 575px) */
+@media (max-width: 575px) {
+    .d-flex.mb-2 {
+        gap: 0.3rem;
+        flex-wrap: wrap; /* Alt alta geçmesine izin ver */
+    }
+    
+    .d-flex.mb-2 * {
+        font-size: 0.75rem;
+        white-space: normal; /* Yazıların sarmasına izin ver */
+    }
+}
+
+/* Çok Küçük Ekranlar (max-width: 400px) */
+@media (max-width: 400px) {
+    .d-flex.mb-2 {
+        flex-direction: column; /* Dikey düzene geç */
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+    
+    .d-flex.mb-2 * {
+        font-size: 0.7rem;
+        width: 100%; /* Tam genişlik */
+    }
+}
