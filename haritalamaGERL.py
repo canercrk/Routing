@@ -1,4 +1,25 @@
-import osmnx as ox  # OpenStreetMap verisi çekmece
+import os
+import osmnx as ox
+
+# OSMnx ayarlarını optimize et
+ox.settings.use_cache = True
+ox.settings.log_console = False
+ox.settings.timeout = 300
+ox.settings.memory = 1024 * 1024 * 512  # 512MB
+
+def get_cached_graph():
+    try:
+        place_name = "Kayseri, Turkey"
+        # Optimize edilmiş parameterler
+        G = ox.graph_from_place(place_name, 
+                              network_type='drive',
+                              simplify=True,
+                              retain_all=False)
+        return G
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
 import networkx as nx # yol to ag baglantı, noktalar to dugum,
 import folium       #harita gösterim, görselleştirme
 from folium.plugins import PolyLineTextPath  # Yön okları için eklendi
@@ -114,6 +135,8 @@ def nearest_neighbor_order(G, intermediate_nodes, start_node, end_node, return_t
         for perm in itertools.permutations(unique_intermediate_nodes):
             order = [start_node] + list(perm) + [end_node]
             distance = sum(distances[(order[i], order[i+1])] for i in range(len(order)-1))
+            
+            print("Permütasyon denendi:", order, "Mesafe:", distance)  # Debug bilgisi
             
             if distance < best_distance:
                 best_distance = distance
