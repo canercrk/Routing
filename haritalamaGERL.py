@@ -5,16 +5,26 @@ import osmnx as ox
 ox.settings.use_cache = True
 ox.settings.log_console = False
 ox.settings.timeout = 300
-ox.settings.memory = 1024 * 1024 * 512  # 512MB
+ox.settings.memory = 1024 * 1024 * 256  # 512MB
 
 def get_cached_graph():
     try:
         place_name = "Kayseri, Turkey"
-        # Optimize edilmiş parameterler
-        G = ox.graph_from_place(place_name, 
-                              network_type='drive',
-                              simplify=True,
-                              retain_all=False)
+        # Daha kısıtlı alan için bbox kullan
+        bbox = [38.68, 35.44, 38.82, 35.57]  # Kayseri merkez sınırları
+        
+        # bbox ile grafiği al ve optimize et
+        G = ox.graph_from_bbox(
+            north=bbox[2], 
+            south=bbox[0],
+            east=bbox[3],
+            west=bbox[1],
+            network_type='drive',
+            simplify=True,
+            retain_all=False,
+            truncate_by_edge=True,
+            clean_periphery=True
+        )
         return G
     except Exception as e:
         print(f"Error: {e}")
