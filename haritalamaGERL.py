@@ -5,7 +5,9 @@ import osmnx as ox
 ox.settings.use_cache = True
 ox.settings.log_console = False
 ox.settings.timeout = 300
-ox.settings.memory = 1024 * 1024 * 256  # 512MB
+ox.settings.memory = 1024 * 1024 * 128  # 512MB
+ox.settings.max_query_area_size = 10000000
+ox.settings.useful_tags_way = ['highway', 'lanes', 'name', 'oneway']
 
 def get_cached_graph():
     try:
@@ -25,6 +27,9 @@ def get_cached_graph():
             truncate_by_edge=True,
             clean_periphery=True
         )
+        # Graph'ı optimize et
+        G = ox.utils_graph.get_largest_component(G, strongly=True)
+        
         return G
     except Exception as e:
         print(f"Error: {e}")
@@ -773,6 +778,6 @@ def download_kml():
         return f"KML dosyası oluşturulamadı: {error_message}", 500
 
 if __name__ == "__main__":
-    # Debug ve webbrowser.open kaldırılmalı
     port = int(os.environ.get("PORT", 5000))
+    print(f"Çalışıyor: http://0.0.0.0:{port}")
     app.run(host="0.0.0.0", port=port, debug=False)
