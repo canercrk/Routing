@@ -1,8 +1,8 @@
-Flask
+flask
 osmnx
 networkx
 folium
 geopy
-shapely
 geopandas
-gunicorn
+shapely
+pandas

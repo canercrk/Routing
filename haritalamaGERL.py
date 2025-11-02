@@ -1,40 +1,4 @@
-import os
-import osmnx as ox
-
-# OSMnx ayarlarını optimize et
-ox.settings.use_cache = True
-ox.settings.log_console = False
-ox.settings.timeout = 300
-ox.settings.memory = 1024 * 1024 * 128  # 512MB
-ox.settings.max_query_area_size = 10000000
-ox.settings.useful_tags_way = ['highway', 'lanes', 'name', 'oneway']
-
-def get_cached_graph():
-    try:
-        place_name = "Kayseri, Turkey"
-        # Daha kısıtlı alan için bbox kullan
-        bbox = [38.68, 35.44, 38.82, 35.57]  # Kayseri merkez sınırları
-        
-        # bbox ile grafiği al ve optimize et
-        G = ox.graph_from_bbox(
-            north=bbox[2], 
-            south=bbox[0],
-            east=bbox[3],
-            west=bbox[1],
-            network_type='drive',
-            simplify=True,
-            retain_all=False,
-            truncate_by_edge=True,
-            clean_periphery=True
-        )
-        # Graph'ı optimize et
-        G = ox.utils_graph.get_largest_component(G, strongly=True)
-        
-        return G
-    except Exception as e:
-        print(f"Error: {e}")
-        return None
-
+import osmnx as ox  # OpenStreetMap verisi çekmece
 import networkx as nx # yol to ag baglantı, noktalar to dugum,
 import folium       #harita gösterim, görselleştirme
 from folium.plugins import PolyLineTextPath  # Yön okları için eklendi
@@ -46,27 +10,8 @@ import math
 from datetime import datetime, timedelta
 import webbrowser
 
-# Kavşak verilerini environment'dan oku
-def load_intersections():
-    try:
-        # Önce environment'dan okumayı dene
-        env_data = os.environ.get('INTERSECTION_DATA')
-        if env_data:
-            return json.loads(env_data)
-        
-        # Environment'da yoksa dosyadan oku (development için)
-        with open('dataset.json', 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except Exception as e:
-        print(f"Hata: {e}")
-        return {}
-
-# Uygulama başlangıcında verileri yükle
-intersection_data = load_intersections()
-
 # Flask uygulaması oluştur
 app = Flask(__name__, template_folder='htmls')
-app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-change-this")
 
 # Basit önbellek 
 class SimpleCache:
@@ -100,7 +45,106 @@ ox.settings.log_console = True
 ox.settings.default_crs = "EPSG:4326"
 
 # Kavşak verileri
-# intersection_data = [ 
+intersection_data = [
+    {"intersection_id": 3, "intersection_name": "TUNA KAVŞAĞI", "latitude": 38.74078, "longitude": 35.5155, "area": 5},
+    {"intersection_id": 5, "intersection_name": "FUZULI KAVŞAĞI", "latitude": 38.73718, "longitude": 35.50397, "area": 5},
+    {"intersection_id": 7, "intersection_name": "İSTASYON", "latitude": 38.73068, "longitude": 35.48264, "area": 5},
+    {"intersection_id": 8, "intersection_name": "GAR", "latitude": 38.72937, "longitude": 35.47848, "area": 5},
+    {"intersection_id": 9, "intersection_name": "OYMAK CD. BALKIRAZ CD.", "latitude": 38.73814, "longitude": 35.46887, "area": 5},
+    {"intersection_id": 43, "intersection_name": "YAVUZ SULTAN SELIM CD.- ORHAN GAZI CD ( ARGINCIK MEYDAN)", "latitude": 38.7498, "longitude": 35.5158, "area": 5},
+    {"intersection_id": 45, "intersection_name": "ADLİYE", "latitude": 38.73546, "longitude": 35.47982, "area": 5},
+    {"intersection_id": 47, "intersection_name": "KALDIRIM CD. - BAGDAT CD. ( GAZI OSMAN )", "latitude": 38.73186, "longitude": 35.46937, "area": 5},
+    {"intersection_id": 51, "intersection_name": "YEŞİL MAHALLE MEYDAN", "latitude": 38.75546, "longitude": 35.46796, "area": 5},
+    {"intersection_id": 55, "intersection_name": "DOĞUMEVİ YAYA", "latitude": 38.73977, "longitude": 35.49115, "area": 5},
+    {"intersection_id": 57, "intersection_name": "12.CD. - 5.CD. ( YENI MAHALLE MEYDAN ) FLAS", "latitude": 38.74243, "longitude": 35.48386, "area": 5},
+    {"intersection_id": 59, "intersection_name": "EMNİYET KAVŞAĞI", "latitude": 38.73993, "longitude": 35.47715, "area": 5},
+    {"intersection_id": 64, "intersection_name": "KAYSERİ PARK", "latitude": 38.72806, "longitude": 35.51883, "area": 3},
+    {"intersection_id": 65, "intersection_name": "FUZULI CD. - BOZANTI CD. ( FLASLAR )", "latitude": 38.73634, "longitude": 35.50443, "area": 5},
+    {"intersection_id": 69, "intersection_name": "BARIS MANÇO CAD. - 3540. SOKAK ( MEVLANA)", "latitude": 38.73693, "longitude": 35.48378, "area": 5},
+    {"intersection_id": 72, "intersection_name": "KIZILIRMAK-AŞIKVEYSEL", "latitude": 38.72982, "longitude": 35.52482, "area": 3},
+    {"intersection_id": 73, "intersection_name": "BAGDAT CD. LIMAN CD. ( FLASLAR )", "latitude": 38.73618, "longitude": 35.46425, "area": 5},
+    {"intersection_id": 75, "intersection_name": "75.YIL", "latitude": 38.75005, "longitude": 35.48612, "area": 5},
+    {"intersection_id": 82, "intersection_name": "AŞIKVEYSEL- MUSTAFA ŞİMŞEK", "latitude": 38.72777, "longitude": 35.52567, "area": 3},
+    {"intersection_id": 84, "intersection_name": "AŞIKVEYSEL-FAKÜLTE İÇİ", "latitude": 38.70864, "longitude": 35.53083, "area": 3},
+    {"intersection_id": 85, "intersection_name": "ARGINCIK TOPTANCILAR", "latitude": 38.74471, "longitude": 35.51247, "area": 5},
+    {"intersection_id": 94, "intersection_name": "GARNİZON KAVŞAĞI", "latitude": 38.70817, "longitude": 35.50673, "area": 3},
+    {"intersection_id": 96, "intersection_name": "MAYA GÖZ KAVŞAĞI", "latitude": 38.70495, "longitude": 35.51294, "area": 3},
+    {"intersection_id": 98, "intersection_name": "İLAHİYAT KAVŞAĞI", "latitude": 38.70286, "longitude": 35.51701, "area": 3},
+    {"intersection_id": 100, "intersection_name": "FAKÜLTE ACİL", "latitude": 38.70127, "longitude": 35.52053, "area": 3},
+    {"intersection_id": 102, "intersection_name": "TALAS BULVARI LOJMAN GIRISI", "latitude": 38.69964, "longitude": 35.5266, "area": 3},
+    {"intersection_id": 103, "intersection_name": "ERKILET BLV. - HACI OSMAN CD. ( FLASLAR )", "latitude": 38.81048, "longitude": 35.44942, "area": 5},
+    {"intersection_id": 104, "intersection_name": "TALAS BAHÇELİEVLER GİRİŞ", "latitude": 38.69395, "longitude": 35.54593, "area": 3},
+    {"intersection_id": 106, "intersection_name": "TALAS KAYMAKAMLIK", "latitude": 38.69295, "longitude": 35.54948, "area": 3},
+    {"intersection_id": 108, "intersection_name": "TALAS DOMİNOS", "latitude": 38.6979, "longitude": 35.56014, "area": 3},
+    {"intersection_id": 109, "intersection_name": "BAGDAT CD. TURGUT REIS CD.", "latitude": 38.73836, "longitude": 35.46088, "area": 5},
+    {"intersection_id": 110, "intersection_name": "EŞREF BİTLİS", "latitude": 38.72516, "longitude": 35.52004, "area": 3},
+    {"intersection_id": 113, "intersection_name": "TALAS BULVARI ( KIZILAY KAN MERKEZI) YAYA", "latitude": 38.69699, "longitude": 35.53516, "area": 3},
+    {"intersection_id": 116, "intersection_name": "FURKAN DOĞAN", "latitude": 38.72156, "longitude": 35.52787, "area": 3},
+    {"intersection_id": 119, "intersection_name": "KAYSERİ GAZ", "latitude": 38.74597, "longitude": 35.4883, "area": 5},
+    {"intersection_id": 120, "intersection_name": "REKTÖRLÜK KAVŞAĞI", "latitude": 38.7114, "longitude": 35.53192, "area": 3},
+    {"intersection_id": 123, "intersection_name": "HUZUREVİ KAVŞAĞI", "latitude": 38.76867, "longitude": 35.46223, "area": 5},
+    {"intersection_id": 124, "intersection_name": "HALEF HOCA", "latitude": 38.70846, "longitude": 35.55502, "area": 3},
+    {"intersection_id": 126, "intersection_name": "TALAS KIZ YURDU", "latitude": 38.69614, "longitude": 35.53823, "area": 3},
+    {"intersection_id": 138, "intersection_name": "KOMANDO CAD", "latitude": 38.70046, "longitude": 35.52322, "area": 3},
+    {"intersection_id": 139, "intersection_name": "YESIL MAH KÖPRÜ", "latitude": 38.75013, "longitude": 35.47102, "area": 5},
+    {"intersection_id": 140, "intersection_name": "HOCA AHMET YESEVI CD. METEHAN SK. ( TALAS JANDARMA )", "latitude": 38.69668, "longitude": 35.55597, "area": 3},
+    {"intersection_id": 142, "intersection_name": "TALAS CEMİL BABA", "latitude": 38.68926, "longitude": 35.55385, "area": 3},
+    {"intersection_id": 147, "intersection_name": "KADİR HAS", "latitude": 38.75116, "longitude": 35.49129, "area": 5},
+    {"intersection_id": 150, "intersection_name": "ERENKÖY KAVŞAĞI", "latitude": 38.6951, "longitude": 35.52923, "area": 3},
+    {"intersection_id": 151, "intersection_name": "SAYER", "latitude": 38.69886, "longitude": 35.5658, "area": 3},
+    {"intersection_id": 157, "intersection_name": "MURAT CD. - SUSURLUK SOKAK ( ITFAIYE ) FLAS", "latitude": 38.73695, "longitude": 35.50945, "area": 5},
+    {"intersection_id": 160, "intersection_name": "KOMANDO CADDESI - ERCIYES KOLEJI BUTONLU YAYA", "latitude": 38.68403, "longitude": 35.54395, "area": 3},
+    {"intersection_id": 161, "intersection_name": "ÇOCUK HASTANESİ", "latitude": 38.78122, "longitude": 35.45696, "area": 5},
+    {"intersection_id": 162, "intersection_name": "KIZILIRMAK CADDESI - OLGUNLAR CD. ( ATLAS KOLEJI)", "latitude": 38.73083, "longitude": 35.52811, "area": 3},
+    {"intersection_id": 163, "intersection_name": "BEKIR YILDIZ BLV. -  IHLAMUR CD. ( YENI PERVANE CAMI BUTONLU YAYA)", "latitude": 38.74655, "longitude": 35.50844, "area": 5},
+    {"intersection_id": 166, "intersection_name": "FAKÜLTE IÇI YENI VETERINERLIK", "latitude": 38.70456, "longitude": 35.53926, "area": 3},
+    {"intersection_id": 169, "intersection_name": "BARIS MANÇO CAD. - 14. CD. ( MEVLANA)", "latitude": 38.73847, "longitude": 35.48802, "area": 5},
+    {"intersection_id": 170, "intersection_name": "MEHMET AKIF ERSOY CD. - YAVUZ SULTAN SELIM CD.", "latitude": 38.70034, "longitude": 35.55316, "area": 3},
+    {"intersection_id": 171, "intersection_name": "MUSTAFA KEMAL PASA BLV. - KARDES SEHITLER CD. ( HAVALIMANI)", "latitude": 38.75843, "longitude": 35.48267, "area": 5},
+    {"intersection_id": 174, "intersection_name": "Talas Servis Yolu", "latitude": 38.70043, "longitude": 35.52131, "area": 3},
+    {"intersection_id": 175, "intersection_name": "KERTMELER", "latitude": 38.71996, "longitude": 35.5494, "area": 3},
+    {"intersection_id": 180, "intersection_name": "ASIK VEYSEL BLV. - TEKNOPARK BUTONLU YAYA", "latitude": 38.7135, "longitude": 35.53131, "area": 3},
+    {"intersection_id": 182, "intersection_name": "FAKÜLTE İÇİ HASTANELER", "latitude": 38.70459, "longitude": 35.52935, "area": 3},
+    {"intersection_id": 183, "intersection_name": "SİVAS BLV. 384.SOKAK (KOCASİNAN MAH.) (BUTONLU )", "latitude": 38.770226, "longitude": 35.568147, "area": 5},
+    {"intersection_id": 195, "intersection_name": "PARAŞÜT İNDİRME", "latitude": 38.68526, "longitude": 35.54235, "area": 3},
+    {"intersection_id": 198, "intersection_name": "TALAS TOKİ", "latitude": 38.70311, "longitude": 35.55082, "area": 3},
+    {"intersection_id": 204, "intersection_name": "BAYBURTLUOĞLU", "latitude": 38.70426, "longitude": 35.55672, "area": 3},
+    {"intersection_id": 209, "intersection_name": "DADALOĞLU", "latitude": 38.79271, "longitude": 35.45184, "area": 5},
+    {"intersection_id": 213, "intersection_name": "ORG.HULUSI AKAR BLV. MIGROS YAYA BUTONLU", "latitude": 38.7213, "longitude": 35.53619, "area": 3},
+    {"intersection_id": 215, "intersection_name": "KOCASİNAN", "latitude": 38.77016, "longitude": 35.56806, "area": 5},
+    {"intersection_id": 217, "intersection_name": "MUSTAFA KEMAL PASA BLV. - YAYA BUTONLU ( SEYRANI CAMI )", "latitude": 38.75496, "longitude": 35.48333, "area": 5},
+    {"intersection_id": 224, "intersection_name": "UMUT CAD.", "latitude": 38.71942, "longitude": 35.55506, "area": 3},
+    {"intersection_id": 229, "intersection_name": "BEKIR YILDIZ BLV.-ALINTERI CD", "latitude": 38.76258, "longitude": 35.43137, "area": 5},
+    {"intersection_id": 232, "intersection_name": "İNCİLİ SOKAK KAV.", "latitude": 38.6862, "longitude": 35.54109, "area": 3},
+    {"intersection_id": 233, "intersection_name": "MUSTAFA KEMAL PASA BLV. -  3.CD ( YAYA BUTONLU )", "latitude": 38.74249, "longitude": 35.48983, "area": 5},
+    {"intersection_id": 234, "intersection_name": "ORG.HULUSI AKAR BLV. - TALAS ITFAIYE FLAS", "latitude": 38.71879, "longitude": 35.56388, "area": 3},
+    {"intersection_id": 235, "intersection_name": "MİTHAT PAŞA YAYA", "latitude": 38.75325, "longitude": 35.46927, "area": 5},
+    {"intersection_id": 237, "intersection_name": "BEKIR YILDIZ BLV  YAYA GEÇIS KAVSAGI", "latitude": 38.74957, "longitude": 35.46407, "area": 5},
+    {"intersection_id": 239, "intersection_name": "BÜYÜKKILIÇ KAVŞAĞI", "latitude": 38.69017, "longitude": 35.53569, "area": 3},
+    {"intersection_id": 243, "intersection_name": "HULISI AKAR BLV.1.YAYA BUTONLU", "latitude": 38.72163, "longitude": 35.53302, "area": 3},
+    {"intersection_id": 244, "intersection_name": "HULISI AKAR BLV. 3.YAYA BUTONLU", "latitude": 38.7206, "longitude": 35.54288, "area": 3},
+    {"intersection_id": 245, "intersection_name": "UMUT PAPATYA CAD.", "latitude": 38.7167, "longitude": 35.55578, "area": 3},
+    {"intersection_id": 246, "intersection_name": "UMUT CAD. ISTASYON 5 YAYA", "latitude": 38.71407, "longitude": 35.55626, "area": 3},
+    {"intersection_id": 247, "intersection_name": "UMUT CAD. 4. YAYA BUTONLU", "latitude": 38.71104, "longitude": 35.55656, "area": 3},
+    {"intersection_id": 248, "intersection_name": "UMUT-TİMUÇİN", "latitude": 38.70845, "longitude": 35.55703, "area": 3},
+    {"intersection_id": 249, "intersection_name": "M. TİMUÇİN ANAYURT", "latitude": 38.70851, "longitude": 35.5607, "area": 3},
+    {"intersection_id": 250, "intersection_name": "MEHMET TIMUÇIN  ISTASYON 7 (ANAYURT PAZAR YERI) YAYA", "latitude": 38.70857, "longitude": 35.56237, "area": 3},
+    {"intersection_id": 251, "intersection_name": "TURGUT-TİMUÇİN", "latitude": 38.70754, "longitude": 35.56582, "area": 3},
+    {"intersection_id": 252, "intersection_name": "TURGUT ÖZAL CD. VILAYET SOKAK PALMIYE APT. BUTONLU YAYA GEÇITI 5", "latitude": 38.70553, "longitude": 35.56536, "area": 3},
+    {"intersection_id": 253, "intersection_name": "TURGUT ÖZAL CD. CEMIL BABA CD.ISTASYON 9 GECELME", "latitude": 38.70181, "longitude": 35.56666, "area": 3},
+    {"intersection_id": 262, "intersection_name": "ERKİLET KÜTÜPHANE", "latitude": 38.79034, "longitude": 35.45322, "area": 5},
+    {"intersection_id": 265, "intersection_name": "BEKIR YILDIZ BLV.-ALINTERI CD", "latitude": 38.76258, "longitude": 35.43137, "area": 5},
+    {"intersection_id": 267, "intersection_name": "Yesil Mah. Bulgurcu sok. Yaya", "latitude": 38.75712, "longitude": 35.46724, "area": 5},
+    {"intersection_id": 268, "intersection_name": "15 TEMMUZ CD. KAYSERI ÜNIVERSITESI BUTONLU YAYA", "latitude": 38.71165, "longitude": 35.55209, "area": 3},
+    {"intersection_id": 271, "intersection_name": "AKMESCIT-BEKIR YILDIZ BULV.", "latitude": 38.7497, "longitude": 35.49936, "area": 5},
+    {"intersection_id": 273, "intersection_name": "SEYRANİ YAYA", "latitude": 38.7498, "longitude": 35.4832, "area": 5},
+    {"intersection_id": 277, "intersection_name": "ERKİLET AKOĞLU CAD.", "latitude": 38.79761, "longitude": 35.44966, "area": 5},
+    {"intersection_id": 280, "intersection_name": "Bağdat Cad. Yaya Butonlu", "latitude": 38.74232, "longitude": 35.45453, "area": 5},
+    {"intersection_id": 500, "intersection_name": "Kerkük Bulvarı (OKUMA)", "latitude": 38.70241, "longitude": 35.53582, "area": 3},
+    {"intersection_id": 508, "intersection_name": "Halef Hoca Cad. (OKUMA)", "latitude": 38.70213, "longitude": 35.55852, "area": 3},
+    {"intersection_id": 524, "intersection_name": "Talas Bulvari-Çay Baglari Kesisimi", "latitude": 38.70067, "longitude": 35.52147, "area": 3},
+    {"intersection_id": 525, "intersection_name": "TALAS HIZLI YOL (OKUMA)", "latitude": 38.70618, "longitude": 35.51016, "area": 3}
+]
 
 # Global graf ve route değişkenleri
 G = None
@@ -150,8 +194,6 @@ def nearest_neighbor_order(G, intermediate_nodes, start_node, end_node, return_t
         for perm in itertools.permutations(unique_intermediate_nodes):
             order = [start_node] + list(perm) + [end_node]
             distance = sum(distances[(order[i], order[i+1])] for i in range(len(order)-1))
-            
-            print("Permütasyon denendi:", order, "Mesafe:", distance)  # Debug bilgisi
             
             if distance < best_distance:
                 best_distance = distance
@@ -778,6 +820,8 @@ def download_kml():
         return f"KML dosyası oluşturulamadı: {error_message}", 500
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    print(f"Çalışıyor: http://0.0.0.0:{port}")
-    app.run(host="0.0.0.0", port=port, debug=False)
+    # Flask uygulamasını başlatmadan önce tarayıcıyı aç
+    url = "http://127.0.0.1:5000"
+    print(f"Çalışıyor: {url} adresini tarayıcıda açabilirsiniz.")
+    webbrowser.open(url)  # Tarayıcıyı açar
+    app.run(debug=True)
