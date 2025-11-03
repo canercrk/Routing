@@ -1,5 +1,4 @@
 # Kayseri Rota Planlama Uygulaması
-# Haritalama — Akıllı Rota ve Görselleştirme
 
 Haritalama, yerel yol ağından (OpenStreetMap) rota hesaplayıp görselleştirmek için geliştirilmiş, kullanıcı dostu bir Flask + OSMnx + Folium uygulamasıdır. Bu repo hem demo amaçlı interaktif harita sayfası (`htmls/`) hem de rota hesaplama backend'ini (`haritalamaGERL.py`) içerir.
 
@@ -22,9 +21,6 @@ pip install -r requirements.txt
 python haritalamaGERL.py
 ```
 Uygulama varsayılan olarak http://127.0.0.1:5000 adresinde çalışacaktır.
-
-Notlar
-- OSMnx, ilk ağ indirme sırasında büyük veri çekebilir ve biraz zaman alabilir. `get_cached_graph` fonksiyonu grafı önbelleğe alır.
 
 ## 1. Genel Amaç
 Bu yazılım, Kayseri şehri için bir rota planlama ve analiz uygulamasıdır. Kullanıcılar harita üzerinde bir başlangıç noktası, bir bitiş noktası ve isteğe bağlı ara duraklar seçebilir. Kod, bu noktalar arasında en kısa ve en uygun rotayı bulur, şunları hesaplar:
