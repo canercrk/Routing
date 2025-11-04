@@ -55,10 +55,6 @@ Geliştirilen sistem, bu süreci kökten değiştirmiştir. Artık aynı durakl�
 
 - Rota Verimliliği (Distance-per-Stop): Model, "en bilindik" yol yerine "matematiksel olarak en kısa" yolu bularak, durak başına düşen mesafeyi optimize eder ve gereksiz kilometre kullanımını engeller.
 
-- Şekil 1: Sistemin ana arayüzü ve harita üzerinde gösterilen operasyonel noktalar.
-
-- Şekil 2: Başlangıç, bitiş ve ara duraklar seçildikten sonra hesaplanan optimize edilmiş rota ve yolculuk detayları (Mesafe, Süre, Maliyet).
-
 ## 5. Varsayımlar ve Çekinceler
 
 Analiz süresince, modelin işleyişi için belirli varsayımlar yapılmış ve bu varsayımlardan doğan bazı çekinceler mevcuttur. Paydaşların bu noktaları dikkate alması gerekmektedir:
