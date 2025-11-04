@@ -34,6 +34,8 @@ Bu analitik sistemin sağladığı temel iş değeri ve en önemli bulgular şun
 - **Operasyonel Uyum:** Rotalar, sahadaki gerçek bir zorunluluk olan "trafik kontrol noktalarını" kısıtlı geçiş düğümleri olarak dikkate alır. Bu, üretilen rotaların teorik değil, pratikte uygulanabilir ve operasyonel gereksinimlerle tam uyumlu olmasını sağlar.
 
 - **Kullanıcı Erişilebilirliği:** Geliştirilen web arayüzü, teknik bilgisi olmayan saha amirlerinin veya operatörlerin dahi karmaşık, çok duraklı rotaları kolayca oluşturmasına, görsel olarak analiz etmesine ve .kml formatında dışa aktarmasına olanak tanır.
+<img width="1920" height="928" alt="Image" src="https://github.com/user-attachments/assets/8d7d6a04-0613-4c3c-81c7-c810c59c1f51" />
+<img width="1920" height="928" alt="Image" src="https://github.com/user-attachments/assets/984ae344-c32f-4dcd-bb85-397d0d67a9a9" />
 
 ## 4. Derinlemesine Bakış
 
