@@ -1,4 +1,4 @@
-# Kayseri Rota Planlama Uygulaması
+# Rota Planlama Uygulaması
 
 ## 1. Arka Plan ve Genel Bakış
 
