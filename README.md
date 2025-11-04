@@ -17,6 +17,7 @@ Sistem, üç ana veri kaynağı ve bir grafik veri modeli üzerine kuruludur:
 	- **Kenarlar (Edges):** İki düğüm arasındaki yol segmentlerini temsil eder. Her kenar, 'mesafe' (metre) gibi ağırlıklandırma öz niteliklerine sahiptir.
 
 - **Operasyonel Kısıt Verisi:** Kayseri Büyükşehir Belediyesi'nden temin edilen, 98 trafik kontrol noktasının ve stratejik kavşağın coğrafi (Enlem/Boylam) koordinatları. Bu noktalar, rota hesaplamasında zorunlu veya ağırlıklandırılmış düğümler olarak görev yapar.
+<img width="1123" height="737" alt="Image" src="https://github.com/user-attachments/assets/72374343-7c86-4cb4-903b-179830ec3447" />
 
 - **Kullanıcı Girdi Verisi:** Uygulama arayüzünden kullanıcı tarafından sağlanan başlangıç noktası, bitiş noktası ve opsiyonel ara durakların koordinatları.
 
