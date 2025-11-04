@@ -4,35 +4,35 @@
 
 Bu proje, Kayseri Büyükşehir Belediyesi'nin operasyonel saha ekipleri (trafik kontrol, zabıta, atık yönetimi vb.) için geliştirilmiş bir rota optimizasyon ve karar destek sistemi sunar.
 
-İş Problemi: Mevcut durumda, saha ekiplerinin güzergâh planlaması büyük ölçüde manuel süreçlere, sürücü tecrübesine ve subjektif değerlendirmelere dayanmaktadır. Bu yaklaşım; artan yakıt maliyetleri, gereksiz zaman kayıpları ve operasyonel verimsizliklere yol açmaktadır. Sabit trafik kontrol noktaları gibi zorunlu kısıtların denkleme dahil edilmesi, manuel planlamayı daha da karmaşık hale getirmektedir.
+**İş Problemi:** Mevcut durumda, saha ekiplerinin güzergâh planlaması büyük ölçüde manuel süreçlere, sürücü tecrübesine ve subjektif değerlendirmelere dayanmaktadır. Bu yaklaşım; artan yakıt maliyetleri, gereksiz zaman kayıpları ve operasyonel verimsizliklere yol açmaktadır. Sabit trafik kontrol noktaları gibi zorunlu kısıtların denkleme dahil edilmesi, manuel planlamayı daha da karmaşık hale getirmektedir.
 
-İş Hedefi: Projenin temel hedefi, manuel planlamayı otomatize ederek operasyonel maliyetleri düşürmek, zaman tasarrufu sağlamak ve saha ekiplerinin verimliliğini maksimize etmektir. Sistem, Kayseri yol ağını ve sabit kontrol noktalarını dikkate alarak, kullanıcı tarafından belirlenen noktalar arasında en en kısa rotayı saniyeler içinde hesaplar. Bu sayede ölçülebilirliği, görünürlüğü sağlayarak görev tamamlama sürelerini iyileştirmek ve kaynak tahsisini optimize etmek hedeflenmektedir.
+**İş Hedefi:** Projenin temel hedefi, manuel planlamayı otomatize ederek operasyonel maliyetleri düşürmek, zaman tasarrufu sağlamak ve saha ekiplerinin verimliliğini maksimize etmektir. Sistem, Kayseri yol ağını ve sabit kontrol noktalarını dikkate alarak, kullanıcı tarafından belirlenen noktalar arasında en en kısa rotayı saniyeler içinde hesaplar. Bu sayede ölçülebilirliği, görünürlüğü sağlayarak görev tamamlama sürelerini iyileştirmek ve kaynak tahsisini optimize etmek hedeflenmektedir.
 
 ## 2. Veri Yapısı ve Modeli
 
 Sistem, üç ana veri kaynağı ve bir grafik veri modeli üzerine kuruludur:
 
-- Yol Ağı Verisi (Graf): Kayseri ilinin tamamına ait yol ağı, OpenStreetMap (OSM) üzerinden temin edilmiştir. Bu veri, bir graf yapısına dönüştürülmüştür.
-	- Düğümler (Nodes): Kavşakları ve yol kesişimlerini temsil eder.
-	- Kenarlar (Edges): İki düğüm arasındaki yol segmentlerini temsil eder. Her kenar, 'mesafe' (metre) gibi ağırlıklandırma öz niteliklerine sahiptir.
+- **Yol Ağı Verisi (Graf):** Kayseri ilinin tamamına ait yol ağı, OpenStreetMap (OSM) üzerinden temin edilmiştir. Bu veri, bir graf yapısına dönüştürülmüştür.
+	- **Düğümler (Nodes):** Kavşakları ve yol kesişimlerini temsil eder.
+	- **Kenarlar (Edges):** İki düğüm arasındaki yol segmentlerini temsil eder. Her kenar, 'mesafe' (metre) gibi ağırlıklandırma öz niteliklerine sahiptir.
 
-- Operasyonel Kısıt Verisi: Kayseri Büyükşehir Belediyesi'nden temin edilen, 98 trafik kontrol noktasının ve stratejik kavşağın coğrafi (Enlem/Boylam) koordinatları. Bu noktalar, rota hesaplamasında zorunlu veya ağırlıklandırılmış düğümler olarak görev yapar.
+- **Operasyonel Kısıt Verisi:** Kayseri Büyükşehir Belediyesi'nden temin edilen, 98 trafik kontrol noktasının ve stratejik kavşağın coğrafi (Enlem/Boylam) koordinatları. Bu noktalar, rota hesaplamasında zorunlu veya ağırlıklandırılmış düğümler olarak görev yapar.
 
-- Kullanıcı Girdi Verisi: Uygulama arayüzünden kullanıcı tarafından sağlanan başlangıç noktası, bitiş noktası ve opsiyonel ara durakların koordinatları.
+- **Kullanıcı Girdi Verisi:** Uygulama arayüzünden kullanıcı tarafından sağlanan başlangıç noktası, bitiş noktası ve opsiyonel ara durakların koordinatları.
 
-Kavramsal Veri Modeli: Sistemin çekirdeği, NetworkX kütüphanesi ile yönetilen ağırlıklı bir graf yapısıdır. Rota optimizasyonu, bu graf üzerinde en kısa yolu bulma problemi olarak matematiksel olarak modellenmiştir.
+**Kavramsal Veri Modeli:** Sistemin çekirdeği, NetworkX kütüphanesi ile yönetilen ağırlıklı bir graf yapısıdır. Rota optimizasyonu, bu graf üzerinde en kısa yolu bulma problemi olarak matematiksel olarak modellenmiştir.
 
 ## 3. Yönetici Özeti
 
 Bu analitik sistemin sağladığı temel iş değeri ve en önemli bulgular şunlardır:
 
-- Otomasyonun Getirisi: Manuel ve hataya açık rota planlama süreci, yerini saniyeler içinde sonuç üreten otomatik bir sisteme bırakmıştır. Bu, planlama için harcanan idari zamanı ortadan kaldırmakta ve insan hatası riskini azaltmaktadır.
+- **Otomasyonun Getirisi:** Manuel ve hataya açık rota planlama süreci, yerini saniyeler içinde sonuç üreten otomatik bir sisteme bırakmıştır. Bu, planlama için harcanan idari zamanı ortadan kaldırmakta ve insan hatası riskini azaltmaktadır.
 
-- Maliyet Odaklı Planlama: Sistem, sadece 'en kısa' mesafeyi değil, aynı zamanda 'en düşük maliyetli' rotayı da hesaplamaktadır. Kullanıcının girdiği (L/100km ve Yakıt Fiyatı) parametrelerine göre dinamik olarak hesaplanan Yakıt Maliyeti (TL), yöneticilere doğrudan parasal tasarruf odaklı kararlar alma imkânı sunar.
+- **Maliyet Odaklı Planlama:** Sistem, sadece 'en kısa' mesafeyi değil, aynı zamanda 'en düşük maliyetli' rotayı da hesaplamaktadır. Kullanıcının girdiği (L/100km ve Yakıt Fiyatı) parametrelerine göre dinamik olarak hesaplanan Yakıt Maliyeti (TL), yöneticilere doğrudan parasal tasarruf odaklı kararlar alma imkânı sunar.
 
-- Operasyonel Uyum: Rotalar, sahadaki gerçek bir zorunluluk olan "trafik kontrol noktalarını" kısıtlı geçiş düğümleri olarak dikkate alır. Bu, üretilen rotaların teorik değil, pratikte uygulanabilir ve operasyonel gereksinimlerle tam uyumlu olmasını sağlar.
+- **Operasyonel Uyum:** Rotalar, sahadaki gerçek bir zorunluluk olan "trafik kontrol noktalarını" kısıtlı geçiş düğümleri olarak dikkate alır. Bu, üretilen rotaların teorik değil, pratikte uygulanabilir ve operasyonel gereksinimlerle tam uyumlu olmasını sağlar.
 
-- Kullanıcı Erişilebilirliği: Geliştirilen web arayüzü, teknik bilgisi olmayan saha amirlerinin veya operatörlerin dahi karmaşık, çok duraklı rotaları kolayca oluşturmasına, görsel olarak analiz etmesine ve .kml formatında dışa aktarmasına olanak tanır.
+- **Kullanıcı Erişilebilirliği:** Geliştirilen web arayüzü, teknik bilgisi olmayan saha amirlerinin veya operatörlerin dahi karmaşık, çok duraklı rotaları kolayca oluşturmasına, görsel olarak analiz etmesine ve .kml formatında dışa aktarmasına olanak tanır.
 
 ## 4. Derinlemesine Bakış
 
