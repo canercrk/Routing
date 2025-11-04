@@ -39,11 +39,11 @@ Bu analitik sistemin sağladığı temel iş değeri ve en önemli bulgular şun
 
 ## 4. Derinlemesine Bakış
 
-### Geçmiş Durum (Tarihsel Trend)
+### Geçmiş Durum
 
 Daha önce, bir saha ekibinin bir günlük planı, ekip liderinin tecrübesine dayalı olarak yaklaşık 15–20 dakikalık bir manuel planlama gerektiriyordu. Bu planlama genellikle "en bilindik" rotaları temel alıyor, ancak "en kısa" veya "en az maliyetli" rotayı garanti edemiyordu. Yakıt ve zaman harcamaları, günden güne %15–20 oranında sapma gösterebiliyor ve ölçümlenmesi zordu.
 
-### Analitik Modelin Çözümü (Yeni Durum)
+### Analitik Modelin Çözümü
 
 Geliştirilen sistem, bu süreci kökten değiştirmiştir. Artık aynı duraklı plan, kullanıcı tarafından arayüze girildiğinde 2–3 saniye içinde hesaplanmaktadır.
 
